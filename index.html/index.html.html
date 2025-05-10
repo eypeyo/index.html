@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Click Mania</title>
+  <style>
+    body {
+      background: #282c34;
+      color: #fff;
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    #game {
+      width: 90vw;
+      height: 60vh;
+      background: #444;
+      border: 2px solid #fff;
+      border-radius: 10px;
+      margin-top: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .target {
+      width: 50px;
+      height: 50px;
+      background: #ff4757;
+      border-radius: 50%;
+      position: absolute;
+      cursor: pointer;
+    }
+
+    #info {
+      margin-top: 10px;
+      font-size: 1.2em;
+    }
+  </style>
+</head>
+<body>
+  <h1>Click Mania</h1>
+  <div id="info">Puntaje: <span id="score">0</span> | Vidas: <span id="lives">3</span></div>
+  <div id="game"></div>
+
+  <audio id="hit-sound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_2a6d4fa0a3.mp3"></audio>
+  <audio id="miss-sound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_5cd1e7d9d1.mp3"></audio>
+
+  <script>
+    const game = document.getElementById("game");
+    const scoreDisplay = document.getElementById("score");
+    const livesDisplay = document.getElementById("lives");
+    const hitSound = document.getElementById("hit-sound");
+    const missSound = document.getElementById("miss-sound");
+
+    let score = 0;
+    let lives = 3;
+    let playing = true;
+
+    function createTarget() {
+      if (!playing) return;
+
+      const target = document.createElement("div");
+      target.classList.add("target");
+      target.style.top = Math.random() * (game.clientHeight - 50) + "px";
+      target.style.left = Math.random() * (game.clientWidth - 50) + "px";
+
+      let clicked = false;
+
+      target.onclick = () => {
+        if (!clicked) {
+          clicked = true;
+          score++;
+          scoreDisplay.textContent = score;
+          hitSound.play();
+          target.remove();
+        }
+      };
+
+      game.appendChild(target);
+
+      setTimeout(() => {
+        if (!clicked && target.parentNode) {
+          target.remove();
+          lives--;
+          livesDisplay.textContent = lives;
+          missSound.play();
+          if (lives <= 0) {
+            playing = false;
+            alert("¡Juego terminado! Puntaje final: " + score);
+          }
+        }
+      }, 1200);
+    }
+
+    setInterval(createTarget, 1000);
+  </script>
+</body>
+</html>
